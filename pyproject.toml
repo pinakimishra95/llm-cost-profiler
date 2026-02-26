@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "llmspy"
+name = "tokenspy"
 version = "0.1.0"
 description = "cProfile for LLMs — find which function is burning your AI budget. Flame graph output, zero-config, no proxy."
 readme = "README.md"

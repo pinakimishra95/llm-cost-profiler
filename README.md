@@ -6,14 +6,14 @@
 
 *Find out in one line. No proxy. No signup. No traffic rerouting.*
 
-[![PyPI version](https://badge.fury.io/py/llmspy.svg)](https://badge.fury.io/py/llmspy)
+[![PyPI version](https://badge.fury.io/py/tokenspy.svg)](https://badge.fury.io/py/tokenspy)
 [![Tests](https://github.com/pinakimishra95/llm-cost-profiler/actions/workflows/tests.yml/badge.svg)](https://github.com/pinakimishra95/llm-cost-profiler/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Zero dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](https://pypi.org/project/llmspy/)
+[![Zero dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](https://pypi.org/project/tokenspy/)
 
 ```bash
-pip install llmspy
+pip install tokenspy
 ```
 
 </div>
@@ -298,6 +298,6 @@ MIT © [Pinaki Mishra](https://github.com/pinakimishra95). See [LICENSE](LICENSE
 
 **Star this repo if you're tired of mystery LLM invoices.** ⭐
 
-[GitHub](https://github.com/pinakimishra95/llm-cost-profiler) · [PyPI](https://pypi.org/project/llmspy/) · [Issues](https://github.com/pinakimishra95/llm-cost-profiler/issues)
+[GitHub](https://github.com/pinakimishra95/llm-cost-profiler) · [PyPI](https://pypi.org/project/tokenspy/) · [Issues](https://github.com/pinakimishra95/llm-cost-profiler/issues)
 
 </div>
