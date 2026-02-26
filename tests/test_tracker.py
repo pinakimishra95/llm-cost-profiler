@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 
-from llmspy.tracker import CallRecord, Tracker
+from tokenspy.tracker import CallRecord, Tracker
 
 
 def _make_record(**kwargs) -> CallRecord:

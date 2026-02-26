@@ -11,7 +11,7 @@ import time
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from llmspy.tracker import Tracker
+    from tokenspy.tracker import Tracker
 
 _original_generate: Any = None
 _patched = False
@@ -70,8 +70,8 @@ def _record(
     provider: str,
 ) -> None:
     try:
-        from llmspy import pricing
-        from llmspy.tracker import CallRecord
+        from tokenspy import pricing
+        from tokenspy.tracker import CallRecord
 
         # Get model name from the instance
         model_name = getattr(model_instance, "model_name", "unknown")

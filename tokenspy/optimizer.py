@@ -9,10 +9,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from llmspy import pricing
+from tokenspy import pricing
 
 if TYPE_CHECKING:
-    from llmspy.tracker import CallRecord, Tracker
+    from tokenspy.tracker import CallRecord, Tracker
 
 # Approximate monthly multiplier: assume 5 calls/min * 60 min * 8 hours * 22 days
 # This is intentionally conservative; users can override.

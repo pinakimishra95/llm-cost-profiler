@@ -10,14 +10,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from llmspy.tracker import CallRecord, Tracker
+    from tokenspy.tracker import CallRecord, Tracker
 
 
 def render_text(tracker: Tracker) -> str:
     """Return a human-readable cost report string."""
     records = tracker.records()
     if not records:
-        return "llmspy: no LLM calls recorded.\n"
+        return "tokenspy: no LLM calls recorded.\n"
 
     total_cost = tracker.total_cost()
     total_tokens = tracker.total_tokens()
@@ -28,7 +28,7 @@ def render_text(tracker: Tracker) -> str:
 
     lines.append("")
     lines.append(
-        f"llmspy cost report — total: ${total_cost:.4f}  "
+        f"tokenspy cost report — total: ${total_cost:.4f}  "
         f"({total_tokens:,} tokens, {total_calls} call{'s' if total_calls != 1 else ''})"
     )
     lines.append("─" * 70)
@@ -112,7 +112,7 @@ def render_html(tracker: Tracker, output_path: Path | None = None) -> str:
 
     svg = f"""<svg width="{svg_width}" height="{y + 20}" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
       <text x="10" y="22" font-size="14" font-weight="bold" fill="#222">
-        llmspy — Total: ${total_cost:.4f} ({total_tokens:,} tokens)
+        tokenspy — Total: ${total_cost:.4f} ({total_tokens:,} tokens)
       </text>
       {''.join(bars_svg)}
     </svg>"""
@@ -136,7 +136,7 @@ def render_html(tracker: Tracker, output_path: Path | None = None) -> str:
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>llmspy — LLM Cost Report</title>
+  <title>tokenspy — LLM Cost Report</title>
   <style>
     body {{ font-family: 'Courier New', monospace; background: #f8f9fa; padding: 24px; color: #222; }}
     h1 {{ font-size: 20px; margin-bottom: 4px; }}
@@ -152,7 +152,7 @@ def render_html(tracker: Tracker, output_path: Path | None = None) -> str:
   </style>
 </head>
 <body>
-  <h1>llmspy — LLM Cost Report</h1>
+  <h1>tokenspy — LLM Cost Report</h1>
   <div class="subtitle">
     Total: <strong>${total_cost:.4f}</strong> &nbsp;|&nbsp;
     Tokens: <strong>{total_tokens:,}</strong> &nbsp;|&nbsp;
@@ -208,7 +208,7 @@ def render_html(tracker: Tracker, output_path: Path | None = None) -> str:
 def open_html_report(tracker: Tracker, output_path: Path | None = None) -> Path:
     """Write the HTML report and open it in the default browser."""
     if output_path is None:
-        output_path = Path("llmspy_report.html")
+        output_path = Path("tokenspy_report.html")
     render_html(tracker, output_path=output_path)
     webbrowser.open(output_path.resolve().as_uri())
     return output_path

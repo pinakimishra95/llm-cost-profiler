@@ -8,7 +8,7 @@ the provider interceptors read when recording a call.
 
 from __future__ import annotations
 
-from llmspy.tracker import Tracker, get_global_tracker
+from tokenspy.tracker import Tracker, get_global_tracker
 
 # Shared mutable list — providers read [0] to get the active function name.
 # Using a list so it can be mutated in-place without rebinding.
@@ -25,9 +25,9 @@ def activate(tracker: Tracker | None = None) -> None:
     if tracker is None:
         tracker = get_global_tracker()
 
-    from llmspy.providers import anthropic as _anthropic_provider
-    from llmspy.providers import google as _google_provider
-    from llmspy.providers import openai as _openai_provider
+    from tokenspy.providers import anthropic as _anthropic_provider
+    from tokenspy.providers import google as _google_provider
+    from tokenspy.providers import openai as _openai_provider
 
     _openai_provider.patch(tracker, _current_function)
     _anthropic_provider.patch(tracker, _current_function)
@@ -40,9 +40,9 @@ def deactivate() -> None:
     """Remove all provider patches."""
     global _active
 
-    from llmspy.providers import anthropic as _anthropic_provider
-    from llmspy.providers import google as _google_provider
-    from llmspy.providers import openai as _openai_provider
+    from tokenspy.providers import anthropic as _anthropic_provider
+    from tokenspy.providers import google as _google_provider
+    from tokenspy.providers import openai as _openai_provider
 
     _openai_provider.unpatch()
     _anthropic_provider.unpatch()

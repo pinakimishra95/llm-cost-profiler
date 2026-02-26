@@ -2,16 +2,16 @@
 profiler.py — @profile decorator and session() context manager.
 
 Usage:
-    import llmspy
+    import tokenspy
 
-    @llmspy.profile
+    @tokenspy.profile
     def run_agent():
         ...
 
-    llmspy.report()
+    tokenspy.report()
 
     # Context manager
-    with llmspy.session() as s:
+    with tokenspy.session() as s:
         ...
     print(s.cost)
 """
@@ -24,8 +24,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from llmspy import interceptor as _interceptor
-from llmspy.tracker import CallRecord, Tracker, get_global_tracker, set_global_tracker
+from tokenspy import interceptor as _interceptor
+from tokenspy.tracker import CallRecord, Tracker, get_global_tracker, set_global_tracker
 
 # ── Decorator ──────────────────────────────────────────────────────────────────
 
@@ -34,13 +34,13 @@ def profile(func: Callable) -> Callable:
 
     Can be used with or without arguments::
 
-        @llmspy.profile
+        @tokenspy.profile
         def my_fn(): ...
 
-        @llmspy.profile()
+        @tokenspy.profile()
         def my_fn(): ...
     """
-    # Support @llmspy.profile() with parens (returns decorator)
+    # Support @tokenspy.profile() with parens (returns decorator)
     if func is None:
         return profile
 
@@ -109,14 +109,14 @@ def session(name: str = "session") -> Generator[Session, None, None]:
 # ── Global init ────────────────────────────────────────────────────────────────
 
 def init(persist: bool = False, persist_dir: str | None = None) -> None:
-    """Configure llmspy global state.
+    """Configure tokenspy global state.
 
     Args:
         persist: If True, all calls are persisted to a local SQLite database.
-        persist_dir: Directory for the SQLite file. Defaults to ~/.llmspy/.
+        persist_dir: Directory for the SQLite file. Defaults to ~/.tokenspy/.
     """
     if persist:
-        db_dir = Path(persist_dir) if persist_dir else Path.home() / ".llmspy"
+        db_dir = Path(persist_dir) if persist_dir else Path.home() / ".tokenspy"
         db_path = db_dir / "usage.db"
         tracker = Tracker(persist_path=db_path)
     else:

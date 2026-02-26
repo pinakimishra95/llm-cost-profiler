@@ -73,14 +73,14 @@ _anthropic_stub = _make_anthropic_stub()
 @pytest.fixture(autouse=True)
 def reset_global_tracker():
     """Reset the global tracker and deactivate all interceptors between tests."""
-    from llmspy import interceptor
-    from llmspy.tracker import Tracker, set_global_tracker
+    from tokenspy import interceptor
+    from tokenspy.tracker import Tracker, set_global_tracker
 
     set_global_tracker(Tracker())
     interceptor._active = False
     # Reset provider patch state
-    from llmspy.providers import anthropic as _ap
-    from llmspy.providers import openai as _op
+    from tokenspy.providers import anthropic as _ap
+    from tokenspy.providers import openai as _op
 
     _op._patched = False
     _op._original_create = None

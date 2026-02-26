@@ -1,22 +1,22 @@
 """
-llmspy — LLM cost profiler.
+tokenspy — LLM cost profiler.
 
 Find out which function is burning your LLM budget in one line.
 
 Usage::
 
-    import llmspy
+    import tokenspy
 
-    @llmspy.profile
+    @tokenspy.profile
     def run_agent(query: str):
         response = openai_client.chat.completions.create(...)
         return response
 
     run_agent("Summarize this")
-    llmspy.report()
+    tokenspy.report()
 
     # Context manager
-    with llmspy.session() as s:
+    with tokenspy.session() as s:
         response = anthropic_client.messages.create(...)
     print(s.cost_str)   # "$0.003"
 """
@@ -37,8 +37,8 @@ __all__ = [
 from pathlib import Path
 from typing import Any
 
-from llmspy.profiler import Session, init, profile, session
-from llmspy.tracker import get_global_tracker
+from tokenspy.profiler import Session, init, profile, session
+from tokenspy.tracker import get_global_tracker
 
 
 def report(format: str = "text", output: str | None = None) -> None:
@@ -46,17 +46,17 @@ def report(format: str = "text", output: str | None = None) -> None:
 
     Args:
         format: ``"text"`` (default) prints to stdout.
-                ``"html"`` writes ``llmspy_report.html`` and opens in browser.
+                ``"html"`` writes ``tokenspy_report.html`` and opens in browser.
         output: Path to write the HTML file (only used when format="html").
     """
-    from llmspy import flamegraph, optimizer
+    from tokenspy import flamegraph, optimizer
 
     tracker = get_global_tracker()
 
     if format == "html":
-        out_path = Path(output) if output else Path("llmspy_report.html")
+        out_path = Path(output) if output else Path("tokenspy_report.html")
         flamegraph.open_html_report(tracker, output_path=out_path)
-        print(f"llmspy: HTML report written to {out_path.resolve()}")
+        print(f"tokenspy: HTML report written to {out_path.resolve()}")
         return
 
     # Text report

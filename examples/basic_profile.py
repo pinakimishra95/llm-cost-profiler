@@ -1,5 +1,5 @@
 """
-basic_profile.py — @llmspy.profile decorator demo.
+basic_profile.py — @tokenspy.profile decorator demo.
 
 Run this with real API keys to see actual cost data:
     OPENAI_API_KEY=sk-... python examples/basic_profile.py
@@ -13,11 +13,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import llmspy
+import tokenspy
 
 # ── Step 1: Decorate any function ─────────────────────────────────────────────
 
-@llmspy.profile
+@tokenspy.profile
 def summarize_document(text: str) -> str:
     """Summarizes a document using OpenAI (or a stub if no key set)."""
     try:
@@ -36,7 +36,7 @@ def summarize_document(text: str) -> str:
         return f"[stub] Summary of: {text[:50]}..."
 
 
-@llmspy.profile
+@tokenspy.profile
 def extract_entities(text: str) -> list[str]:
     """Extracts named entities using OpenAI (or a stub if no key set)."""
     try:
@@ -73,10 +73,10 @@ print(f"  → {entities}\n")
 
 # ── Step 3: Print the cost report ─────────────────────────────────────────────
 
-llmspy.report()
+tokenspy.report()
 
 # ── Bonus: access stats programmatically ──────────────────────────────────────
-data = llmspy.stats()
+data = tokenspy.stats()
 print(f"\nProgrammatic access:")
 print(f"  Total cost: ${data['total_cost_usd']:.4f}")
 print(f"  Total tokens: {data['total_tokens']:,}")

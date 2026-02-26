@@ -33,23 +33,23 @@ def run_pipeline(query):
 
 Langfuse and Helicone force you to reroute traffic through their proxy. Sign up. Configure. Break your local setup.
 
-**llmspy takes 1 line. No proxy. No signup. Runs entirely on your machine.**
+**tokenspy takes 1 line. No proxy. No signup. Runs entirely on your machine.**
 
 ---
 
 ## The Fix
 
 ```python
-import llmspy
+import tokenspy
 
-@llmspy.profile
+@tokenspy.profile
 def run_pipeline(query):
     docs = fetch_and_summarize(query)
     entities = extract_entities(docs)
     return generate_report(entities)
 
 run_pipeline("Analyze Q3 earnings")
-llmspy.report()
+tokenspy.report()
 ```
 
 ---
@@ -58,7 +58,7 @@ llmspy.report()
 
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
-║  llmspy cost report                                                  ║
+║  tokenspy cost report                                                  ║
 ║  total: $0.0523  ·  18,734 tokens  ·  3 calls                       ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
@@ -94,9 +94,9 @@ llmspy.report()
 ### Decorator (most common)
 
 ```python
-import llmspy
+import tokenspy
 
-@llmspy.profile
+@tokenspy.profile
 def summarize_docs(docs: list[str]) -> str:
     return openai_client.chat.completions.create(
         model="gpt-4o",
@@ -104,14 +104,14 @@ def summarize_docs(docs: list[str]) -> str:
     ).choices[0].message.content
 
 summarize_docs(my_docs)
-llmspy.report()            # prints flame graph to terminal
-llmspy.report("html")     # writes llmspy_report.html, opens in browser
+tokenspy.report()            # prints flame graph to terminal
+tokenspy.report("html")     # writes tokenspy_report.html, opens in browser
 ```
 
 ### Context Manager
 
 ```python
-with llmspy.session("research_task") as s:
+with tokenspy.session("research_task") as s:
     response = anthropic_client.messages.create(
         model="claude-haiku-4-5",
         messages=[{"role": "user", "content": query}]
@@ -125,7 +125,7 @@ print(f"Calls:  {s.calls}")       # 1
 ### Programmatic Access
 
 ```python
-data = llmspy.stats()
+data = tokenspy.stats()
 # {
 #   "total_cost_usd": 0.042,
 #   "total_tokens": 15000,
@@ -140,10 +140,10 @@ data = llmspy.stats()
 
 ```python
 # In your app startup:
-llmspy.init(persist=True)   # saves to ~/.llmspy/usage.db
+tokenspy.init(persist=True)   # saves to ~/.tokenspy/usage.db
 
 # Decorate as normal — costs accumulate across restarts
-@llmspy.profile
+@tokenspy.profile
 def my_agent(query):
     ...
 ```
@@ -152,42 +152,42 @@ def my_agent(query):
 
 ## How It Works
 
-llmspy monkey-patches the SDK client **in-process** — the same technique used by `py-spy` and `line_profiler`:
+tokenspy monkey-patches the SDK client **in-process** — the same technique used by `py-spy` and `line_profiler`:
 
 ```
 Your Code
     │
-    ├── @llmspy.profile ────────────────────────────── sets active function
+    ├── @tokenspy.profile ────────────────────────────── sets active function
     │
     └── openai_client.chat.completions.create(...)
                 │
-                └── llmspy interceptor (in-process monkey-patch)
+                └── tokenspy interceptor (in-process monkey-patch)
                         ├── calls original SDK method
                         ├── reads response.usage (tokens)
                         ├── looks up cost in built-in pricing table
                         ├── records: function · model · tokens · cost · duration
                         └── returns response UNCHANGED to your code
 
-llmspy.report() → renders flame graph from recorded data
+tokenspy.report() → renders flame graph from recorded data
 ```
 
 **No proxy server. No HTTP interception. No environment variables. No configuration.**
 
-Your code runs exactly as before. llmspy just watches and keeps score.
+Your code runs exactly as before. tokenspy just watches and keeps score.
 
 ---
 
 ## HTML Flame Graph
 
 ```python
-llmspy.report(format="html")
+tokenspy.report(format="html")
 ```
 
 Opens a self-contained HTML file in your browser — zero JS dependencies, pure SVG:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  llmspy — Total: $0.0523  (18,734 tokens)                       │
+│  tokenspy — Total: $0.0523  (18,734 tokens)                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  fetch_and_summarize  ████████████████████████████████  73%     │
@@ -231,7 +231,7 @@ Automatically detected — nothing to configure:
 | gemini-1.5-pro | $1.25 | $5.00 |
 | gemini-1.5-flash | $0.075 | $0.30 |
 
-[→ Full pricing table](llmspy/pricing.py)
+[→ Full pricing table](tokenspy/pricing.py)
 
 ---
 
@@ -239,19 +239,19 @@ Automatically detected — nothing to configure:
 
 | Symbol | Description |
 |---|---|
-| `@llmspy.profile` | Decorator — profile all LLM calls inside the function |
-| `llmspy.session(name)` | Context manager — profile calls in a `with` block |
-| `llmspy.report()` | Print text flame graph to terminal |
-| `llmspy.report(format="html")` | Write + open HTML flame graph in browser |
-| `llmspy.stats()` | Return full breakdown as a dict |
-| `llmspy.reset()` | Clear all recorded calls |
-| `llmspy.init(persist=True)` | Enable SQLite persistence across sessions |
+| `@tokenspy.profile` | Decorator — profile all LLM calls inside the function |
+| `tokenspy.session(name)` | Context manager — profile calls in a `with` block |
+| `tokenspy.report()` | Print text flame graph to terminal |
+| `tokenspy.report(format="html")` | Write + open HTML flame graph in browser |
+| `tokenspy.stats()` | Return full breakdown as a dict |
+| `tokenspy.reset()` | Clear all recorded calls |
+| `tokenspy.init(persist=True)` | Enable SQLite persistence across sessions |
 
 ---
 
 ## Comparison
 
-| | Langfuse | Helicone | LiteLLM Proxy | **llmspy** |
+| | Langfuse | Helicone | LiteLLM Proxy | **tokenspy** |
 |---|---|---|---|---|
 | Requires proxy / gateway | ✅ yes | ✅ yes | ✅ yes | **❌ no** |
 | Requires signup | ✅ yes | ✅ yes | ❌ no | **❌ no** |
@@ -267,9 +267,9 @@ Automatically detected — nothing to configure:
 ## Roadmap
 
 - [ ] Streaming response support (`stream=True`)
-- [ ] Token budget alerts: `@llmspy.profile(budget_usd=0.10)`
+- [ ] Token budget alerts: `@tokenspy.profile(budget_usd=0.10)`
 - [ ] LangChain / LangGraph integration
-- [ ] CLI: `llmspy history`, `llmspy report`
+- [ ] CLI: `tokenspy history`, `tokenspy report`
 - [ ] GitHub Actions annotation (cost diff per PR)
 - [ ] Cost comparison across git commits
 

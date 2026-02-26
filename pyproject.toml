@@ -49,7 +49,7 @@ Documentation = "https://github.com/pinakimishra95/tokenspy#readme"
 Issues = "https://github.com/pinakimishra95/tokenspy/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["llmspy"]
+packages = ["tokenspy"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,7 +1,7 @@
 """Tests for pricing.py — no external dependencies."""
 
 
-from llmspy.pricing import (
+from tokenspy.pricing import (
     CHEAPER_ALTERNATIVES,
     calculate,
     get_cheaper_alternative,
@@ -66,7 +66,7 @@ class TestCheaperAlternative:
 
     def test_all_alternatives_are_in_pricing(self):
         """Every alt model in CHEAPER_ALTERNATIVES must exist in PRICING."""
-        from llmspy.pricing import PRICING
+        from tokenspy.pricing import PRICING
 
         for original, alt in CHEAPER_ALTERNATIVES.items():
             assert alt in PRICING, f"alt model {alt!r} for {original!r} not in PRICING"

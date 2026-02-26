@@ -11,8 +11,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import llmspy
-from llmspy.tracker import CallRecord, Tracker, get_global_tracker, set_global_tracker
+import tokenspy
+from tokenspy.tracker import CallRecord, Tracker, get_global_tracker, set_global_tracker
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -56,7 +56,7 @@ class TestProfileDecorator:
         Completions.create = fake_create
 
         try:
-            @llmspy.profile
+            @tokenspy.profile
             def my_fn():
                 client = MagicMock()
                 client.chat.completions = Completions()
@@ -65,7 +65,7 @@ class TestProfileDecorator:
             my_fn()
         finally:
             Completions.create = original
-            from llmspy.providers import openai as _op2
+            from tokenspy.providers import openai as _op2
             _op2._patched = False
             _op2._original_create = None
 
@@ -77,7 +77,7 @@ class TestProfileDecorator:
         assert records[0].cost_usd > 0
 
     def test_decorator_preserves_return_value(self):
-        @llmspy.profile
+        @tokenspy.profile
         def add(a, b):
             return a + b
 
@@ -85,7 +85,7 @@ class TestProfileDecorator:
         assert result == 7
 
     def test_decorator_preserves_exceptions(self):
-        @llmspy.profile
+        @tokenspy.profile
         def broken():
             raise ValueError("oops")
 
@@ -93,11 +93,11 @@ class TestProfileDecorator:
             broken()
 
     def test_decorator_sets_function_name(self):
-        from llmspy import interceptor
+        from tokenspy import interceptor
 
         names_seen = []
 
-        @llmspy.profile
+        @tokenspy.profile
         def named_function():
             names_seen.append(interceptor.get_current_function())
 
@@ -105,11 +105,11 @@ class TestProfileDecorator:
         assert "named_function" in names_seen[0]
 
     def test_decorator_restores_function_name_after_call(self):
-        from llmspy import interceptor
+        from tokenspy import interceptor
 
         interceptor.set_current_function("outer")
 
-        @llmspy.profile
+        @tokenspy.profile
         def inner_fn():
             pass
 
@@ -122,15 +122,15 @@ class TestProfileDecorator:
 
 class TestSession:
     def test_session_cost_starts_at_zero(self):
-        with llmspy.session() as s:
+        with tokenspy.session() as s:
             pass
         assert s.cost == 0.0
 
     def test_session_tracks_records(self):
-        from llmspy.tracker import CallRecord
+        from tokenspy.tracker import CallRecord
 
         # Manually inject a record into the session tracker
-        session_instance = llmspy.profiler.Session(name="test")
+        session_instance = tokenspy.profiler.Session(name="test")
         rec = CallRecord(
             function_name="test",
             call_stack=["test"],
@@ -147,8 +147,8 @@ class TestSession:
         assert session_instance.tokens == 1200
 
     def test_session_context_manager_yields_session(self):
-        with llmspy.session("my_session") as s:
-            assert isinstance(s, llmspy.Session)
+        with tokenspy.session("my_session") as s:
+            assert isinstance(s, tokenspy.Session)
             assert s.name == "my_session"
 
 
@@ -156,8 +156,8 @@ class TestSession:
 
 class TestGlobalAPI:
     def test_stats_empty(self):
-        llmspy.reset()
-        s = llmspy.stats()
+        tokenspy.reset()
+        s = tokenspy.stats()
         assert s["total_cost_usd"] == 0.0
         assert s["total_calls"] == 0
 
@@ -175,12 +175,12 @@ class TestGlobalAPI:
         tracker.record(rec)
         assert tracker.total_calls() == 1
 
-        llmspy.reset()
+        tokenspy.reset()
         assert tracker.total_calls() == 0
 
     def test_report_text_no_crash_on_empty(self, capsys):
-        llmspy.reset()
-        llmspy.report()
+        tokenspy.reset()
+        tokenspy.report()
         captured = capsys.readouterr()
         assert "no LLM calls recorded" in captured.out
 
@@ -197,7 +197,7 @@ class TestGlobalAPI:
                 duration_ms=1200.0,
             )
         )
-        llmspy.report()
+        tokenspy.report()
         captured = capsys.readouterr()
         assert "summarize" in captured.out
         assert "$" in captured.out
@@ -208,10 +208,10 @@ class TestGlobalAPI:
 class TestInit:
     def test_init_no_persist(self):
         # Should not raise
-        llmspy.init(persist=False)
+        tokenspy.init(persist=False)
 
     def test_init_with_persist(self, tmp_path):
-        llmspy.init(persist=True, persist_dir=str(tmp_path))
+        tokenspy.init(persist=True, persist_dir=str(tmp_path))
         # Check that the tracker has a persist path set
         tracker = get_global_tracker()
         assert tracker._persist_path is not None

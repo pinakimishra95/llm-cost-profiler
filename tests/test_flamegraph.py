@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from llmspy.tracker import CallRecord, Tracker
+from tokenspy.tracker import CallRecord, Tracker
 
 
 def _make_tracker(*records: dict) -> Tracker:
@@ -30,14 +30,14 @@ def _make_tracker(*records: dict) -> Tracker:
 
 class TestRenderText:
     def test_empty_tracker(self):
-        from llmspy.flamegraph import render_text
+        from tokenspy.flamegraph import render_text
 
         t = Tracker()
         text = render_text(t)
         assert "no LLM calls recorded" in text
 
     def test_single_record(self):
-        from llmspy.flamegraph import render_text
+        from tokenspy.flamegraph import render_text
 
         t = _make_tracker({"function_name": "summarize", "cost_usd": 0.05})
         text = render_text(t)
@@ -45,7 +45,7 @@ class TestRenderText:
         assert "$0.05" in text
 
     def test_multiple_functions(self):
-        from llmspy.flamegraph import render_text
+        from tokenspy.flamegraph import render_text
 
         t = _make_tracker(
             {"function_name": "fn_a", "cost_usd": 0.05},
@@ -56,14 +56,14 @@ class TestRenderText:
         assert "fn_b" in text
 
     def test_shows_total(self):
-        from llmspy.flamegraph import render_text
+        from tokenspy.flamegraph import render_text
 
         t = _make_tracker({"cost_usd": 0.042})
         text = render_text(t)
         assert "0.042" in text or "0.04" in text
 
     def test_percentages_shown(self):
-        from llmspy.flamegraph import render_text
+        from tokenspy.flamegraph import render_text
 
         t = _make_tracker({"function_name": "only_fn", "cost_usd": 0.01})
         text = render_text(t)
@@ -72,7 +72,7 @@ class TestRenderText:
 
 class TestRenderHTML:
     def test_returns_html_string(self):
-        from llmspy.flamegraph import render_html
+        from tokenspy.flamegraph import render_html
 
         t = _make_tracker({"function_name": "agent_run", "cost_usd": 0.03})
         html = render_html(t)
@@ -80,7 +80,7 @@ class TestRenderHTML:
         assert "agent_run" in html
 
     def test_writes_file(self):
-        from llmspy.flamegraph import render_html
+        from tokenspy.flamegraph import render_html
 
         t = _make_tracker({"function_name": "run_fn", "cost_usd": 0.01})
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -91,14 +91,14 @@ class TestRenderHTML:
             assert "run_fn" in content
 
     def test_empty_tracker_returns_placeholder(self):
-        from llmspy.flamegraph import render_html
+        from tokenspy.flamegraph import render_html
 
         t = Tracker()
         html = render_html(t)
         assert "No LLM calls recorded" in html
 
     def test_svg_present(self):
-        from llmspy.flamegraph import render_html
+        from tokenspy.flamegraph import render_html
 
         t = _make_tracker({"cost_usd": 0.01})
         html = render_html(t)
@@ -107,14 +107,14 @@ class TestRenderHTML:
 
 class TestOptimizer:
     def test_no_hints_for_empty_tracker(self):
-        from llmspy.optimizer import generate_hints
+        from tokenspy.optimizer import generate_hints
 
         t = Tracker()
         hints = generate_hints(t)
         assert hints == []
 
     def test_cheaper_model_hint(self):
-        from llmspy.optimizer import generate_hints
+        from tokenspy.optimizer import generate_hints
 
         # gpt-4o → gpt-4o-mini alternative
         t = _make_tracker({"model": "gpt-4o", "cost_usd": 0.01})
@@ -123,7 +123,7 @@ class TestOptimizer:
         assert len(model_hints) >= 1
 
     def test_large_input_hint(self):
-        from llmspy.optimizer import generate_hints
+        from tokenspy.optimizer import generate_hints
 
         t = _make_tracker({"input_tokens": 12000, "cost_usd": 0.05})
         hints = generate_hints(t)
@@ -131,7 +131,7 @@ class TestOptimizer:
         assert len(token_hints) >= 1
 
     def test_hints_sorted_by_severity(self):
-        from llmspy.optimizer import generate_hints
+        from tokenspy.optimizer import generate_hints
 
         t = _make_tracker(
             {"model": "gpt-4o", "input_tokens": 15000, "cost_usd": 0.10},
@@ -147,7 +147,7 @@ class TestOptimizer:
                 pytest.fail("high severity hint appeared after low")
 
     def test_render_hints_returns_string(self):
-        from llmspy.optimizer import generate_hints, render_hints
+        from tokenspy.optimizer import generate_hints, render_hints
 
         t = _make_tracker({"model": "gpt-4o", "cost_usd": 0.01})
         hints = generate_hints(t)
@@ -155,6 +155,6 @@ class TestOptimizer:
         assert isinstance(rendered, str)
 
     def test_render_hints_empty(self):
-        from llmspy.optimizer import render_hints
+        from tokenspy.optimizer import render_hints
 
         assert render_hints([]) == ""

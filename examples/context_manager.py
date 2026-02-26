@@ -1,5 +1,5 @@
 """
-context_manager.py — llmspy.session() context manager demo.
+context_manager.py — tokenspy.session() context manager demo.
 
 Perfect for one-off cost measurement without decorating every function.
 
@@ -11,19 +11,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import llmspy
+import tokenspy
 
 print("=== Context manager demo ===\n")
 
 # Measure cost of a single block
-with llmspy.session("research_pipeline") as session:
+with tokenspy.session("research_pipeline") as session:
     # Simulate what would happen inside your actual agent:
     # (real calls would go here — we show how to use the API)
     print("  Running research pipeline inside session...")
 
     # Manually inject a fake record to demonstrate the API
     # (In real usage, just make normal SDK calls inside the `with` block)
-    from llmspy.tracker import CallRecord
+    from tokenspy.tracker import CallRecord
     session._tracker.record(
         CallRecord(
             function_name="research_pipeline",
