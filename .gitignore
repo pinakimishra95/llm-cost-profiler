@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# llmspy data
+.llmspy/
+llmspy_report.html
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
